@@ -33,6 +33,28 @@ describe('Testando o service de produtos', function () {
         expect(data).to.be.deep.equal({ message: 'Product not found' });
     });
 
+    it('should create a product successfully', async function () {
+        const newProduct = {
+            id: 10,
+            name: 'new product',
+        };
+        sinon.stub(productsModel, 'createProduct').resolves([newProduct]);
+        const { status, data } = await productServices.createProduct({ name: newProduct.name });
+        expect(status).to.be.equal('CREATED');
+        expect(data).to.be.equal(newProduct);
+    });   
+
+    it('should not create a product with a short name', async function () {
+        const newProduct = {
+            id: 10,
+            name: 'new',
+        };
+        sinon.stub(productsModel, 'createProduct').resolves([newProduct]);
+        const { status, data } = await productServices.createProduct({ name: newProduct.name });
+        expect(status).to.be.equal('INVALID_VALUE');
+        expect(data).to.be.deep.equal({ message: '"name" length must be at least 5 characters long' });
+    });
+
     afterEach(function () {
         sinon.restore();
     });

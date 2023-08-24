@@ -28,6 +28,26 @@ describe('products model', function () {
         const response = await productsModel.getById(0);
         expect(response).to.be.deep.equal([]);
  });
+ it('criar um produto com sucesso', async function () {
+    const newProduct = { 
+        id: 10,
+        name: 'new product',
+     };
+
+    sinon.stub(connection, 'execute')
+    .onCall(0).resolves([{ insertId: 1 }])
+    .onCall(1)
+    .resolves([newProduct]);
+
+    const response = await productsModel.createProduct(newProduct);
+    expect(response).to.be.deep.equal(newProduct);
+});
+
+it('deletar produto com sucesso', async function () {
+    sinon.stub(connection, 'execute').resolves([{ affectedRows: 1 }]);
+    const response = await productsModel.deleteProduct(1);
+    expect(response).to.be.deep.equal(undefined);
+});
     
     afterEach(function () {
     sinon.restore();
