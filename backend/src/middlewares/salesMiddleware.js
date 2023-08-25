@@ -1,5 +1,6 @@
 const validateProductId = (req, res, next) => {
     const salesItems = req.body;
+
     const missingId = salesItems.some((item) => item.productId === undefined);
     if (missingId) {
         return res.status(400).json({ message: '"productId" is required' });
@@ -17,10 +18,7 @@ const validateQuantity = (req, res, next) => {
     next();
 };
 
-const validateAll = [validateProductId, validateQuantity];
-
 module.exports = {
-    // validateProductId,
-    // validateQuantity,
-    validateAll,
+     validateProductId,
+     validateQuantity,
 };

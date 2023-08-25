@@ -1,8 +1,7 @@
 const { createSaleItemSchema } = require('../schema/salesSchema');
 
 const validateCreateItemSale = (saleItem) => {
-    const validateArray = saleItem
-    .map((item) => createSaleItemSchema.validate(item));
+    const validateArray = saleItem.map((item) => createSaleItemSchema.validate(item));
 
     const { error } = validateArray.find((item) => item.error !== undefined);
 
