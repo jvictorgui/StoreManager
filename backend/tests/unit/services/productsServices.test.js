@@ -17,13 +17,13 @@ describe('Testando o service de produtos', function () {
         expect(data).to.be.deep.equal(allProducts);
     });
 
-    it('lista primeiro produto', async function () {
+    it('deve listar primeiro produto com sucesso', async function () {
         const [firstProduct] = allProducts;
         const { id } = firstProduct;
-        sinon.stub(productsModel, 'getAll').resolves(firstProduct);
+        sinon.stub(productsModel, 'getById').resolves([firstProduct]);
         const { status, data } = await productServices.getById(id);
         expect(status).to.be.equal('SUCCESSFUL');
-        expect(data).to.be.deep.equal(firstProduct);
+        expect(data).to.be.equal(firstProduct);
     });
 
     it('erro se produto not found', async function () {
@@ -33,7 +33,7 @@ describe('Testando o service de produtos', function () {
         expect(data).to.be.deep.equal({ message: 'Product not found' });
     });
 
-    it('should create a product successfully', async function () {
+    it('deve criar um produto com sucesso', async function () {
         const newProduct = {
             id: 10,
             name: 'new product',
@@ -44,7 +44,7 @@ describe('Testando o service de produtos', function () {
         expect(data).to.be.equal(newProduct);
     });   
 
-    it('should not create a product with a short name', async function () {
+    it('nao deve criar um pdroduto com nome curto', async function () {
         const newProduct = {
             id: 10,
             name: 'new',
@@ -53,6 +53,21 @@ describe('Testando o service de produtos', function () {
         const { status, data } = await productServices.createProduct({ name: newProduct.name });
         expect(status).to.be.equal('INVALID_VALUE');
         expect(data).to.be.deep.equal({ message: '"name" length must be at least 5 characters long' });
+    });
+    it('deve deletar um produto com sucesso', async function () {
+        sinon.stub(productsModel, 'getById').resolves([allProducts[0]]);
+        sinon.stub(productsModel, 'deleteProduct').resolves(undefined);
+        const { status, data } = await productServices.deleteProduct(1);
+        expect(status).to.be.equal('DELETED');
+        expect(data).to.be.equal(undefined);
+    }); 
+
+    it('nao deve deletar um produto com id inexistente', async function () {
+        sinon.stub(productsModel, 'getById').resolves([]);
+        sinon.stub(productsModel, 'deleteProduct').resolves(undefined);
+        const { status, data } = await productServices.deleteProduct(0);
+        expect(status).to.be.equal('NOT_FOUND');
+        expect(data).to.be.deep.equal({ message: 'Product not found' });
     });
 
     afterEach(function () {
