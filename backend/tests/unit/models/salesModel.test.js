@@ -4,7 +4,7 @@ const sinonChai = require('sinon-chai');
 
 const connection = require('../../../src/models/connection');
 const { salesModels } = require('../../../src/models');
-const { allSales } = require('../mocks/salesMock');
+const { allSales, newSale } = require('../mocks/salesMock');
 
 chai.use(sinonChai);
 const { expect } = chai;
@@ -28,6 +28,20 @@ describe(' model de vendas', function () {
         sinon.stub(connection, 'execute').resolves([[]]);
         const response = await salesModels.getById(0);
         expect(response).to.be.deep.equal([]);
+    });
+
+    it('deve criar uma venda com sucesso', async function () {
+        const newId = newSale.expectedResponse.id;
+        sinon.stub(connection, 'execute')
+        .onCall(0).resolves([{ insertId: newId }])
+        .onCall(1)
+.resolves()
+        .onCall(2)
+.resolves()
+        .onCall(3)
+.resolves([newSale.expectedResponse.itemsSold]);
+        const response = await salesModels.createSale(newSale.request);
+        expect(response).to.be.deep.equal(newSale.expectedResponse);
     });
 
     afterEach(function () {

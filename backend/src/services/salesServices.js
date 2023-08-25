@@ -37,4 +37,5 @@ module.exports = {
     getAll,
     getById,
     createSale,
-};
+    productDontExists,
+};  
